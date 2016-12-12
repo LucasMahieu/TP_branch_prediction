@@ -25,7 +25,7 @@ for k in 5 10; do # k represente le nombre de bits de l'historique
       n=0
       for i in $trace_list ; do # pour toutes les traces
          printf "%-40s\t" `basename $i | awk -F\. '{print $1}'` >> $r/$j
-         mpki=`./src/predict $i $j $k | tail -1 | sed -e '/MPKI/s///'` >> $r/$j
+         mpki=`./src/predict $i $j $k | tail -1 | sed -e '/MPKI/s/\./\,/'` >> $r/$j
          printf "%0.3f\n" `echo $mpki` >> $r/$j
          echo -n ${clock[$n]}""
          n=`expr $n + 1`
