@@ -18,7 +18,7 @@ mkdir -p $p
 trace_list=`find ./traces -name '*.trace.*' | sort`
 clock=('|' '/' '-' '\')
 
-for k in `seq 1 1`; do # k represente le nombre de bits de l'historique
+for k in `seq 1 10`; do # k represente le nombre de bits de l'historique
    for j in `seq 4 16`; do # j represente le log2 des tailles des tables
       rm -f $r/$j
       echo "Calcul des résultats pour une taille de 1<<$j"
