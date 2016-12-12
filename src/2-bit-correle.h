@@ -115,4 +115,4 @@ class my_predictor : public branch_predictor {
 				update_history(taken);
 			}
 		}
-};
+;

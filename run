@@ -26,7 +26,7 @@ for k in `seq 1 1`; do # k represente le nombre de bits de l'historique
       for i in $trace_list ; do # pour toutes les traces
          printf "%-40s\t" `basename $i | awk -F\. '{print $1}'` >> $r/$j
          mpki=`./src/predict $i $j | tail -1 | sed -e '/MPKI/s///'` >> $r/$j
-         printf "%0.3f\n" `echo $mpki|sed 's/\./,/'` >> $r/$j
+         printf "%0.3f\n" `echo $mpki` >> $r/$j
          echo -n ${clock[$n]}""
          n=`expr $n + 1`
          if test $n -eq 4 ; then
