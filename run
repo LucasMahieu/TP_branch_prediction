@@ -49,7 +49,7 @@ done
 # Génération des figures, on fait l'hypothèse que gnuplot est appelé du
 # répertoire dans lequel sont les figures
 trace_list=`cat $r/4 | awk '{print $1}'`
-fname=$p/1-bit
+fname=$p/$1
 echo "set terminal svg" > $fname.gpl
 echo "set xlabel 'Log2 de la taille de la table des branchements'" >> $fname.gpl
 echo "set ylabel 'Nb de prédictions ratées pour 1K branchements'" >> $fname.gpl
