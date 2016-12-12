@@ -27,8 +27,8 @@ class my_predictor : public branch_predictor {
 		my_predictor(unsigned int pcbits, unsigned int histlen)
 		{
 			// Alloue et met à zéro la table
-			history = new uint8_t [1<<pcbits]();
-			table = new uint8_t [1<<histlen]();
+			history = new long[1<<pcbits]();
+			table = new uint8_t [1<<pcbits]();
 
 			hist_size = histlen;
 			table_bits = pcbits;
@@ -43,8 +43,8 @@ class my_predictor : public branch_predictor {
 				// Récupération des bits de l'adresse pour indexer la table
 				//u.index = history & ((1<<hist_size)-1);
 				u.index = history[(b.address
-							& ((1<<hist_size)-1))];
-				// Choix de la direction (la mise à jour se fait dans update
+							& ((1<<table_bits)-1))];
+				// Choix de la direction (la mise à jour se fait dans update)
 				u.direction_prediction(next_predict(get_state(u.index)));
 			} else {
 				// Saut inconditionnel, 100% sur que c'est pris !
@@ -102,8 +102,9 @@ class my_predictor : public branch_predictor {
 
 		void update_history(int index, bool taken)
 		{
-			history[index] = (taken==true) ? (history[index]<<1) | 1
-					: (history[index] <<1) | 0;
+			history[index] = (taken==true) ?
+				(history[index]<<1 & ((1<<hist_size)-1)) | 1
+				: (history[index]<<1 & ((1<<hist_size)-1)) | 0;
 		}
 
 		// Mise à jour de la table de prédiction
