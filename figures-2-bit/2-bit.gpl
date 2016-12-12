@@ -1,0 +1,12 @@
+set terminal svg
+set xlabel 'Log2 de la taille de la table des branchements'
+set ylabel 'Nb de prédictions ratées pour 1K branchements'
+set output ".././figures-2-bit/1-bit-0.svg"
+plot [][0:70] 'gzip' with linesp,'vpr' with linesp,'gcc' with linesp,'mcf' with linesp,'crafty' with linesp
+set output ".././figures-2-bit/1-bit-1.svg"
+plot [][0:70] 'parser' with linesp,'compress' with linesp,'jess' with linesp,'raytrace' with linesp,'db' with linesp
+set output ".././figures-2-bit/1-bit-2.svg"
+plot [][0:70] 'javac' with linesp,'mpegaudio' with linesp,'mtrt' with linesp,'jack' with linesp,'eon' with linesp
+set output ".././figures-2-bit/1-bit-3.svg"
+plot [][0:70] 'perlbmk' with linesp,'gap' with linesp,'vortex' with linesp,'bzip2' with linesp,'twolf' with linesp
+
