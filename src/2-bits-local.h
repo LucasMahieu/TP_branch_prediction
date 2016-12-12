@@ -42,8 +42,7 @@ class my_predictor : public branch_predictor {
 				// Saut conditionnel
 				// Récupération des bits de l'adresse pour indexer la table
 				//u.index = history & ((1<<hist_size)-1);
-				u.index = history[(b.address
-							& ((1<<table_bits)-1))];
+				u.index = (b.address & ((1<<table_bits)-1));
 				// Choix de la direction (la mise à jour se fait dans update)
 				u.direction_prediction(next_predict(get_state(u.index)));
 			} else {
@@ -77,7 +76,7 @@ class my_predictor : public branch_predictor {
 		// lig = ligne de la table
 		// pos = colonne de la table, 1 ou 2
 		unsigned int get_state(int lig){
-			return table[lig] & 3;
+			return table[history[lig]] & 3;
 		}
 
 		// lig = ligne de la table
@@ -86,16 +85,16 @@ class my_predictor : public branch_predictor {
 			unsigned int i = get_state(lig);
 			switch (i) {
 				case SNT:
-					table[lig] = e ? 1 : 0;
+					table[history[lig]] = e ? 1 : 0;
 					break;
 				case NT:
-					table[lig] = e ? 3 : 0;
+					table[history[lig]] = e ? 3 : 0;
 					break;
 				case T:
-					table[lig] = e ? 3 : 0;
+					table[history[lig]] = e ? 3 : 0;
 					break;
 				case ST:
-					table[lig] = e ? 3 : 2;
+					table[history[lig]] = e ? 3 : 2;
 					break;
 			}
 		}
