@@ -28,7 +28,7 @@ class my_predictor : public branch_predictor {
 		{
 			// Alloue et met à zéro la table
 			history = new long[1<<pcbits]();
-			table = new uint8_t [1<<pcbits]();
+			table = new uint8_t [1<<histlen]();
 
 			hist_size = histlen;
 			table_bits = pcbits;
@@ -112,7 +112,7 @@ class my_predictor : public branch_predictor {
 			// Saut conditionnel
 			// On peut forcer à true ou false pour avoir les extrêmes
 			if (bi.br_flags & BR_CONDITIONAL) {
-				set_state(((my_update*)u)->index, taken);
+				set_state(history[((my_update*)u)->index], taken);
 				update_history(((my_update*)u)->index,taken);
 			}
 		}
