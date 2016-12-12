@@ -19,7 +19,7 @@ class my_predictor : public branch_predictor {
 		branch_info bi;
 		uint8_t *table;
 		unsigned int table_bits;
-		long history;
+		uint32_t history;
 		uint8_t hist_size;
 
 
@@ -80,20 +80,20 @@ class my_predictor : public branch_predictor {
 
 		// lig = ligne de la table 
 		// met à jour l'état de la fsm
-		void set_state(int lig, bool e){
+		void set_state(int lig, bool t){
 			unsigned int i = get_state(lig);
 			switch (i) {
 				case SNT:
-					table[lig] = e ? 1 : 0;
+					table[lig] = t ? 1 : 0;
 					break;
 				case NT:
-					table[lig] = e ? 3 : 0;
+					table[lig] = t ? 3 : 0;
 					break;
 				case T:
-					table[lig] = e ? 3 : 0;
+					table[lig] = t ? 3 : 0;
 					break;
 				case ST:
-					table[lig] = e ? 3 : 2;
+					table[lig] = t ? 3 : 2;
 					break;
 			}
 		}
