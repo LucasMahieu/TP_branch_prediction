@@ -1,0 +1,82 @@
+#!/bin/bash
+# Frédéric Pétrot <Frederic.Petrot@imag.fr>
+# Pour Ensimag, SLE-3A
+# vim:se ts=3 noexpandtab:
+
+if test $# -ne 1 ; then
+   echo "Le programe $0 attend un argument identifiant le prédicteur testé pour construire les noms de répertoires";
+	exit 1;
+fi
+
+# Création des répertoires
+r=./results-$1
+p=./figures-$1
+mkdir -p $r
+mkdir -p $p
+
+# Calcul du taux de mauvaise prédiction
+trace_list=`find ./traces -name '*.trace.*' | sort`
+clock=('|' '/' '-' '\')
+
+for k in `seq 1 1`; do # k represente le nombre de bits de l'historique
+   for j in `seq 4 16`; do # j represente le log2 des tailles des tables
+      rm -f $r/$j
+      echo "Calcul des résultats pour une taille de 1<<$j"
+      n=0
+      for i in $trace_list ; do # pour toutes les traces
+         printf "%-40s\t" `basename $i | awk -F\. '{print $1}'` >> $r/$j
+         mpki=`./src/predict $i $j | tail -1 | sed -e '/MPKI/s///'` >> $r/$j
+         printf "%0.3f\n" `echo $mpki|sed 's/\./,/'` >> $r/$j
+         echo -n ${clock[$n]}""
+         n=`expr $n + 1`
+         if test $n -eq 4 ; then
+            n=0;
+         fi
+      done
+   done
+done
+
+
+# Préparation de ce qu'il faut pour produire les figures
+trace_list=`cat $r/4 | awk '{print $1}'`
+for i in $trace_list ; do
+   rm -f $p/$i
+   for j in `seq 4 16` ; do
+      echo $j `grep $i $r/$j | awk '{print $2}'` >> $p/$i
+   done
+done
+
+# Génération des figures, on fait l'hypothèse que gnuplot est appelé du
+# répertoire dans lequel sont les figures
+trace_list=`cat $r/4 | awk '{print $1}'`
+fname=$p/1-bit
+echo "set terminal svg" > $fname.gpl
+echo "set xlabel 'Log2 de la taille de la table des branchements'" >> $fname.gpl
+echo "set ylabel 'Nb de prédictions ratées pour 1K branchements'" >> $fname.gpl
+one=0
+j=0
+n=0 # On ne fait que 5 graphes par plot
+for i in $trace_list ; do
+   if [ $one -eq 0 ] ; then
+      # Le nom est indicé pour faire plusieurs svg
+      echo "set output \"../$fname-$j.svg\"" >> $fname.gpl
+      # 70 est la valeur max sur l'ensemble des données, afin
+      # d'obtenir des graphes comparables
+      echo -n "plot [][0:70] '$i' with linesp" >> $fname.gpl
+      one=1
+      j=`expr $j + 1`
+   else 
+      echo -n ",'$i' with linesp" >> $fname.gpl
+   fi
+   n=`expr $n + 1`
+   if [ $n -eq 5 ]; then
+      echo "" >> $fname.gpl
+      one=0; # Il faut refaire un plot
+      n=0; # On fait en réalité un modulo
+   fi
+done
+if [ $n -eq 0 ] ; then
+   echo "" >> $fname.gpl
+fi
+(cd $p; gnuplot ../$fname.gpl)
+exit 0
